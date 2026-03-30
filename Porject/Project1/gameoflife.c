@@ -48,11 +48,13 @@ Color *evaluateOneCell(Image *image, int row, int col, uint32_t rule)
             int n_row = neighbors[i][0];
             int n_col = neighbors[i][1];
             
+			//统计邻居存活数
             alive_R += (image->image[n_row][n_col].R >> bit) & 1;
             alive_G += (image->image[n_row][n_col].G >> bit) & 1;
             alive_B += (image->image[n_row][n_col].B >> bit) & 1;
         }
 
+		//统计当前位置是否存活
         int is_alive_R = (image->image[row][col].R >> bit) & 1;
         int is_alive_G = (image->image[row][col].G >> bit) & 1;
         int is_alive_B = (image->image[row][col].B >> bit) & 1;
