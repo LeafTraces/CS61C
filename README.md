@@ -10,7 +10,7 @@
 *总计 : 12 个实验*
 - [x] **Lab 00**: 课程配置、命令行基础与 Git 冲突解决
 - [x] **Lab 01**: C 语言基础、内存陷阱与 GDB/Valgrind 调试
-- [ ] **Lab 02**: C 语言进阶与内存管理 (Memory Management)
+- [x] **Lab 02**: C 语言进阶与内存管理 (Memory Management)
 - [ ] **Lab 03**: RISC-V 汇编基础 (RISC-V Assembly)
 - [ ] **Lab 04**: RISC-V 函数调用约定 (Calling Conventions)
 - [ ] **Lab 05**: 逻辑门与 Logisim 基础 (Logisim Basics)
