@@ -31,6 +31,7 @@ $(BIT_OPS_PROG): $(BIT_OPS_OBJS)
 $(LFSR_PROG): $(LFSR_OBJS)
 	$(CC) $(CFLAGS) -g -o $(LFSR_PROG) $(LFSR_OBJS) $(LDFLAGS)
 
+#vector.c, vector-test.c
 $(VECTOR_PROG) : $(VECTOR_OBJS)
 	$(CC) $(CFLAGS) -g -o $(VECTOR_PROG) $(VECTOR_OBJS) $(LDFLAGS)
 
