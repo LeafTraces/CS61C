@@ -22,3 +22,15 @@ main:
 
 factorial:
     # YOUR CODE HERE
+    mv t0, a0   # t0 = n
+    li t1, 1
+
+loop:
+    beq t0, x0, done
+    mul t1, t1, t0
+    addi t0, t0, -1
+    j loop
+
+done:
+    mv a0, t1
+    ret
