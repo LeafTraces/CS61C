@@ -35,20 +35,27 @@ class TestAbs(TestCase):
 
 
 class TestRelu(TestCase):
-    def test_simple(self):
+    def do_relu(self, values, expected=None, code=0, length=None):
         t = AssemblyTest(self, "relu.s")
-        # create an array in the data section
-        array0 = t.array([1, -2, 3, -4, 5, -6, 7, -8, 9])
-        # load address of `array0` into register a0
+        array0 = t.array(values)
         t.input_array("a0", array0)
-        # set a1 to the length of our array
-        t.input_scalar("a1", len(array0))
-        # call the relu function
+        t.input_scalar("a1", len(values) if length is None else length)
         t.call("relu")
-        # check that the array0 was changed appropriately
-        t.check_array(array0, [1, 0, 3, 0, 5, 0, 7, 0, 9])
-        # generate the `assembly/TestRelu_test_simple.s` file and run it through venus
-        t.execute()
+        if expected is not None:
+            t.check_array(array0, expected)
+        t.execute(code=code)
+
+    def test_simple(self):
+        self.do_relu([1, -2, 3, -4, 5, -6, 7, -8, 9], [1, 0, 3, 0, 5, 0, 7, 0, 9])
+
+    def test_all_positive(self):
+        self.do_relu([1, 2, 3], [1, 2, 3])
+
+    def test_all_negative(self):
+        self.do_relu([-1, -2, -3], [0, 0, 0])
+
+    def test_length_less_than_one(self):
+        self.do_relu([1], code=78, length=0)
 
     @classmethod
     def tearDownClass(cls):
@@ -56,21 +63,27 @@ class TestRelu(TestCase):
 
 
 class TestArgmax(TestCase):
-    def test_simple(self):
+    def do_argmax(self, values, length, expected=None, code=0):
         t = AssemblyTest(self, "argmax.s")
-        # create an array in the data section
-        raise NotImplementedError("TODO")
-        # TODO
-        # load address of the array into register a0
-        # TODO
-        # set a1 to the length of the array
-        # TODO
-        # call the `argmax` function
-        # TODO
-        # check that the register a0 contains the correct output
-        # TODO
-        # generate the `assembly/TestArgmax_test_simple.s` file and run it through venus
-        t.execute()
+        array0 = t.array(values)
+        t.input_array("a0", array0)
+        t.input_scalar("a1", length)
+        t.call("argmax")
+        if expected is not None:
+            t.check_scalar("a0", expected)
+        t.execute(code=code)
+
+    def test_simple(self):
+        self.do_argmax([1, 2, 3, 4], 4, 3)
+
+    def test_tie_returns_first_index(self):
+        self.do_argmax([1, 7, 7, 3], 4, 1)
+
+    def test_all_negative(self):
+        self.do_argmax([-9, -3, -12, -3], 4, 1)
+
+    def test_length_less_than_one(self):
+        self.do_argmax([1], 0, code=77)
 
     @classmethod
     def tearDownClass(cls):
@@ -78,20 +91,37 @@ class TestArgmax(TestCase):
 
 
 class TestDot(TestCase):
-    def test_simple(self):
+    def do_dot(self, v0, v1, length, stride0, stride1, expected=None, code=0):
         t = AssemblyTest(self, "dot.s")
-        # create arrays in the data section
-        raise NotImplementedError("TODO")
-        # TODO
-        # load array addresses into argument registers
-        # TODO
-        # load array attributes into argument registers
-        # TODO
-        # call the `dot` function
+        array0 = t.array(v0)
+        array1 = t.array(v1)
+        t.input_array("a0", array0)
+        t.input_array("a1", array1)
+        t.input_scalar("a2", length)
+        t.input_scalar("a3", stride0)
+        t.input_scalar("a4", stride1)
         t.call("dot")
-        # check the return value
-        # TODO
-        t.execute()
+        if expected is not None:
+            t.check_scalar("a0", expected)
+        t.execute(code=code)
+
+    def test_simple(self):
+        self.do_dot([1, 2, 3], [4, 5, 6], 3, 1, 1, 32)
+
+    def test_strided(self):
+        self.do_dot([1, 0, 2, 0, 3], [4, 0, 5, 0, 6], 3, 2, 2, 32)
+
+    def test_negative_values(self):
+        self.do_dot([-1, -2, -3], [4, 5, 6], 3, 1, 1, -32)
+
+    def test_length_less_than_one(self):
+        self.do_dot([1], [2], 0, 1, 1, code=75)
+
+    def test_stride0_less_than_one(self):
+        self.do_dot([1], [2], 1, 0, 1, code=76)
+
+    def test_stride1_less_than_one(self):
+        self.do_dot([1], [2], 1, 1, 0, code=76)
 
     @classmethod
     def tearDownClass(cls):
@@ -99,37 +129,175 @@ class TestDot(TestCase):
 
 
 class TestMatmul(TestCase):
-
-    def do_matmul(self, m0, m0_rows, m0_cols, m1, m1_rows, m1_cols, result, code=0):
+    def do_matmul(self, m0, m0_rows, m0_cols,
+                  m1, m1_rows, m1_cols,
+                  result, code=0):
         t = AssemblyTest(self, "matmul.s")
-        # we need to include (aka import) the dot.s file since it is used by matmul.s
+
+        # matmul uses dot
         t.include("dot.s")
 
-        # create arrays for the arguments and to store the result
+        # create arrays
         array0 = t.array(m0)
         array1 = t.array(m1)
-        array_out = t.array([0] * len(result))
 
-        # load address of input matrices and set their dimensions
-        raise NotImplementedError("TODO")
-        # TODO
-        # load address of output array
-        # TODO
+        # result memory must be pre-allocated
+        out_len = len(result) if len(result) > 0 else 1
+        array_out = t.array([0] * out_len)
 
-        # call the matmul function
+        # load arguments
+        t.input_array("a0", array0)
+        t.input_scalar("a1", m0_rows)
+        t.input_scalar("a2", m0_cols)
+
+        t.input_array("a3", array1)
+        t.input_scalar("a4", m1_rows)
+        t.input_scalar("a5", m1_cols)
+
+        t.input_array("a6", array_out)
+
+        # call matmul
         t.call("matmul")
 
-        # check the content of the output array
-        # TODO
+        # only check output if matmul should succeed
+        if code == 0:
+            t.check_array(array_out, result)
 
-        # generate the assembly file and run it through venus, we expect the simulation to exit with code `code`
         t.execute(code=code)
 
-    def test_simple(self):
+    def test_square_3_by_3(self):
         self.do_matmul(
-            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
-            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
-            [30, 36, 42, 66, 81, 96, 102, 126, 150]
+            [1, 2, 3,
+             4, 5, 6,
+             7, 8, 9],
+            3, 3,
+
+            [1, 2, 3,
+             4, 5, 6,
+             7, 8, 9],
+            3, 3,
+
+            [30, 36, 42,
+             66, 81, 96,
+             102, 126, 150]
+        )
+
+    def test_rectangular_2_by_3_times_3_by_2(self):
+        self.do_matmul(
+            [1, 2, 3,
+             4, 5, 6],
+            2, 3,
+
+            [7, 8,
+             9, 10,
+             11, 12],
+            3, 2,
+
+            [58, 64,
+             139, 154]
+        )
+
+    def test_1_by_3_times_3_by_1(self):
+        self.do_matmul(
+            [1, 2, 3],
+            1, 3,
+
+            [4,
+             5,
+             6],
+            3, 1,
+
+            [32]
+        )
+
+    def test_2_by_1_times_1_by_2(self):
+        self.do_matmul(
+            [3,
+             4],
+            2, 1,
+
+            [5, 6],
+            1, 2,
+
+            [15, 18,
+             20, 24]
+        )
+
+    def test_with_negative_numbers(self):
+        self.do_matmul(
+            [1, -2,
+             -3, 4],
+            2, 2,
+
+            [-5, 6,
+             7, -8],
+            2, 2,
+
+            [-19, 22,
+             43, -50]
+        )
+
+    def test_m0_rows_invalid(self):
+        self.do_matmul(
+            [1, 2, 3],
+            0, 3,
+
+            [1, 2, 3],
+            3, 1,
+
+            [0],
+            code=72
+        )
+
+    def test_m0_cols_invalid(self):
+        self.do_matmul(
+            [1, 2, 3],
+            1, 0,
+
+            [1, 2, 3],
+            3, 1,
+
+            [0],
+            code=72
+        )
+
+    def test_m1_rows_invalid(self):
+        self.do_matmul(
+            [1, 2, 3],
+            1, 3,
+
+            [1, 2, 3],
+            0, 1,
+
+            [0],
+            code=73
+        )
+
+    def test_m1_cols_invalid(self):
+        self.do_matmul(
+            [1, 2, 3],
+            1, 3,
+
+            [1, 2, 3],
+            3, 0,
+
+            [0],
+            code=73
+        )
+
+    def test_dimension_mismatch(self):
+        self.do_matmul(
+            [1, 2,
+             3, 4],
+            2, 2,
+
+            [1, 2,
+             3, 4,
+             5, 6],
+            3, 2,
+
+            [0, 0, 0, 0],
+            code=74
         )
 
     @classmethod
