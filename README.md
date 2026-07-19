@@ -11,7 +11,7 @@
 - [x] **Lab 00**: 课程配置、命令行基础与 Git 冲突解决
 - [x] **Lab 01**: C 语言基础、内存陷阱与 GDB/Valgrind 调试
 - [x] **Lab 02**: C 语言进阶与内存管理 (Memory Management)
-- [ ] **Lab 03**: RISC-V 汇编基础 (RISC-V Assembly)
+- [x] **Lab 03**: RISC-V 汇编基础 (RISC-V Assembly)
 - [ ] **Lab 04**: RISC-V 函数调用约定 (Calling Conventions)
 - [ ] **Lab 05**: 逻辑门与 Logisim 基础 (Logisim Basics)
 - [ ] **Lab 06**: CPU ALU 与状态元件 (ALU & State Elements)
@@ -24,9 +24,9 @@
 ---
 
 ## Projects (核心项目)
-*总计 : 4 个大项目*
+*总计 : 4 个大
 - [x] **Project 1: The Game of Life** - *重点: C 语言二维数组、位运算、生命游戏算法、图像隐写术*
-- [ ] **Project 2: CS61Classify (或者类似的 RISC-V 项目)**
+- [x] **Project 2: CS61Classify (或者类似的 RISC-V 项目)**
   - *重点: 使用纯 RISC-V 汇编语言实现人工神经网络（矩阵乘法、激活函数）*
 - [ ] **Project 3: CS61CPU**
   - *重点: 使用 Logisim 从零开始搭建一台能运行真实指令的流水线 CPU*

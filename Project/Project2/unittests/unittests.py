@@ -409,6 +409,7 @@ class TestClassify(TestCase):
         t.include("read_matrix.s")
         t.include("relu.s")
         t.include("write_matrix.s")
+        t.input_scalar("a2", 0)
         return t
 
     def test_simple0_input0(self):
@@ -423,9 +424,35 @@ class TestClassify(TestCase):
         t.execute(args=args)
 
         # compare the output file and
-        raise NotImplementedError("TODO")
-        # TODO
+        t.check_file_output(out_file, ref_file)
         # compare the classification output with `check_stdout`
+        t.check_stdout("2")
+
+    def test_argc_error(self):
+            t = self.make_test()
+            args = ["inputs/simple0/bin/m0.bin", "inputs/simple0/bin/m1.bin",
+                    "inputs/simple0/bin/inputs/input0.bin"]
+            t.call("classify")
+            t.execute(args=args, code=89)
+
+    def test_malloc_error(self):
+        t = self.make_test()
+        out_file = "outputs/test_basic_main/student_malloc.bin"
+        args = ["inputs/simple0/bin/m0.bin", "inputs/simple0/bin/m1.bin",
+                "inputs/simple0/bin/inputs/input0.bin", out_file]
+        t.call("classify")
+        t.execute(args=args, fail="malloc", code=88)
+
+    def test_simple1_input0(self):
+        t = self.make_test()
+        out_file = "outputs/test_basic_main/student1.bin"
+        ref_file = "outputs/test_basic_main/reference1.bin"
+        args = ["inputs/simple1/bin/m0.bin", "inputs/simple1/bin/m1.bin",
+                "inputs/simple1/bin/inputs/input0.bin", out_file]
+        t.call("classify")
+        t.execute(args=args)
+        t.check_file_output(out_file, ref_file)
+        t.check_stdout("1")
 
     @classmethod
     def tearDownClass(cls):
