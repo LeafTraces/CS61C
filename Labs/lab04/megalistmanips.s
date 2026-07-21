@@ -1,3 +1,9 @@
+'''
+1. line 69: add t1, s0, x0 -> lw t1, 0(s0) 取s0里的内容存到t1
+2. line 75: t0为计数器，取首地址和偏移量后计算元素地址，首地址 + 偏移 = 元素地址
+3. line 80~88: jalr s1后还需要用到t，所以需要“瞬时”保存t然后返回
+4. line 95~96: lw取地址内的内容，la取地址; s1中已经是地址中内容了(line57)
+'''
 .globl map
 
 .data
@@ -46,7 +52,7 @@ main:
     ecall
 
 map:
-    addi sp, sp, -12
+    addi sp, sp, -32
     sw ra, 0(sp)
     sw s1, 4(sp)
     sw s0, 8(sp)
@@ -66,27 +72,35 @@ map:
     # are modified by the callees, even when we know the content inside the functions 
     # we call. this is to enforce the abstraction barrier of calling convention.
 mapLoop:
-    add t1, s0, x0      # load the address of the array of current node into t1
+    lw t1, 0(s0)        # load the address of the array of current node into t1
     lw t2, 4(s0)        # load the size of the node's array into t2
-
-    add t1, t1, t0      # offset the array address by the count
+    slli t3, t0, 2      # offset the array address by the count
+    add t1, t1, t3      # start + offset = element address
     lw a0, 0(t1)        # load the value at that address into a0
 
+    sw t0, 12(sp)
+    sw t1, 16(sp)
+    sw t2, 20(sp)
+
     jalr s1             # call the function on that value.
+
+    lw t0, 12(sp)
+    lw t1, 16(sp)
+    lw t2, 20(sp)
 
     sw a0, 0(t1)        # store the returned value back into the array
     addi t0, t0, 1      # increment the count
     bne t0, t2, mapLoop # repeat if we haven't reached the array size yet
 
-    la a0, 8(s0)        # load the address of the next node into a0
-    lw a1, 0(s1)        # put the address of the function back into a1 to prepare for the recursion
+    lw a0, 8(s0)        # load the address of the next node into a0
+    mv a1, s1       # put the address of the function back into a1 to prepare for the recursion
 
     jal  map            # recurse
 done:
     lw s0, 8(sp)
     lw s1, 4(sp)
     lw ra, 0(sp)
-    addi sp, sp, 12
+    addi sp, sp, 32
     jr ra
 
 mystery:
@@ -126,7 +140,8 @@ loop: #do...
     addi sp, sp, 4
     jr ra
 
-fillArray: lw t0, 0(a1) #t0 gets array element
+fillArray: 
+    lw t0, 0(a1) #t0 gets array element
     sw t0, 0(a0) #node->arr gets array element
     lw t0, 4(a1)
     sw t0, 4(a0)
