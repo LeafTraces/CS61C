@@ -13,7 +13,7 @@
 - [x] **Lab 02**: C 语言进阶与内存管理 (Memory Management)
 - [x] **Lab 03**: RISC-V 汇编基础 (RISC-V Assembly)
 - [x] **Lab 04**: RISC-V 函数调用约定 (Calling Conventions)
-- [ ] **Lab 05**: 逻辑门与 Logisim 基础 (Logisim Basics)
+- [x] **Lab 05**: 逻辑门与 Logisim 基础 (Logisim Basics)
 - [ ] **Lab 06**: CPU ALU 与状态元件 (ALU & State Elements)
 - [ ] **Lab 07**: 数据通路与 CPU 设计 (Datapath)
 - [ ] **Lab 08**: 缓存机制 (Caches)
