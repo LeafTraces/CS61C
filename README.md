@@ -28,7 +28,7 @@
 - [x] **Project 1: The Game of Life** - *重点: C 语言二维数组、位运算、生命游戏算法、图像隐写术*
 - [x] **Project 2: CS61Classify (或者类似的 RISC-V 项目)**
   - *重点: 使用纯 RISC-V 汇编语言实现人工神经网络（矩阵乘法、激活函数）*
-- [ ] **Project 3: CS61CPU**
+- [x] **Project 3: CS61CPU**
   - *重点: 使用 Logisim 从零开始搭建一台能运行真实指令的流水线 CPU*
 - [ ] **Project 4: NumC**
   - *重点: C 语言性能优化（SIMD, OpenMP, 缓存分块），手写高性能矩阵运算库*
