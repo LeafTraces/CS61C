@@ -7,8 +7,8 @@ Part 1
     blocksize = 20, n = 5000: 
     blocksize = 20, n = 10000: 
 
-    Checkoff Question 1:
-    Checkoff Question 2:
+    Checkoff Question 1: When n = 10000, the stride is 40000 bytes, spanning 10 memory pages. At this point, not only is every access a cache miss, but the TLB (Translation Lookaside Buffer) also starts missing frequently—and a TLB miss is more expensive than a cache miss. That’s why the curve rises superlinearly.
+    Checkoff Question 2: The cache transfer unit is a block (typically 64 bytes = 16 ints). Each column within a sub-block contains only blocksize contiguous elements; when blocksize is too small, the fetched cache block is not fully utilized before moving on to the next column. In the four-level loop, the smaller the block size, the more frequently the two outer loops jump between blocks.
 
 Part 2
     blocksize = 50, n = 10000:
@@ -17,4 +17,5 @@ Part 2
     blocksize = 1000, n = 10000:
     blocksize = 5000, n = 10000:
 
-    Checkoff Question 3:
+    Checkoff Question 3: Performance initially increases and then decreases, with the best performance achieved at a block size of around 50.
+
