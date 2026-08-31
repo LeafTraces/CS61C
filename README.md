@@ -15,7 +15,7 @@
 - [x] **Lab 04**: RISC-V 函数调用约定 (Calling Conventions)
 - [x] **Lab 05**: 逻辑门与 Logisim 基础 (Logisim Basics)
 - [x] **Lab 06**: 流水线和CPU (Pipelining and CPU)
-- [ ] **Lab 07**: 缓存机制 (Caches)
+- [x] **Lab 07**: 缓存机制 (Caches)
 - [ ] **Lab 08**: 虚拟内存 (Virtual Memory)
 - [ ] **Lab 09**: SIMD介绍 (SIMD Instructions)
 - [ ] **Lab 10**: 线程级并行 (Thread-Level Parallelism, OpenMP)
