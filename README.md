@@ -17,7 +17,7 @@
 - [x] **Lab 06**: 流水线和CPU (Pipelining and CPU)
 - [x] **Lab 07**: 缓存机制 (Caches)
 - [x] **Lab 08**: 虚拟内存 (Virtual Memory)
-- [ ] **Lab 09**: SIMD介绍 (SIMD Instructions)
+- [x] **Lab 09**: SIMD介绍 (SIMD Instructions)
 - [ ] **Lab 10**: 线程级并行 (Thread-Level Parallelism, OpenMP)
 - [ ] **Lab 11**: Spark/Dependency
 
